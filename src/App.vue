@@ -10,4 +10,10 @@ import { RouterView } from 'vue-router'
   <RouterView />
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+  #app {
+    --color-bg: var(--color-tertiary);
+    padding: 30px;
+    background-color: var(--color-bg);
+  }
+</style>
