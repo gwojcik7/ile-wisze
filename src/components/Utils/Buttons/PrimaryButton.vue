@@ -2,6 +2,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
+
 interface Props {
     to?: string;
     block?: boolean;
@@ -61,6 +62,11 @@ if(block) {
             border: 1px solid var(--color-bg);
             transform: translate(5px, 5px);
             transition: transform 0.2s ease-in-out;
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         &--block {

@@ -4,6 +4,7 @@ import DashboardView from "@/views/Dashboard/DashboardView.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuth } from "@/composables/useAuth";
 import { watch } from "vue";
+import FriendsView from "@/views/Friends/FriendsView.vue";
 
 const { isSignedIn } = useAuth();
 
@@ -32,6 +33,15 @@ const router = createRouter({
       component: DashboardView,
       meta: {
         title: 'Start',
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/friends',
+      name: 'friends',
+      component: FriendsView,
+      meta: {
+        title: 'Znajomi',
         requiresAuth: true
       }
     }
