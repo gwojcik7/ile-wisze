@@ -22,30 +22,14 @@ const { closeMenu } = useMenu();
 
 const rawLinks: Link[] = [
     {
-        name: 'Strona główna',
-        to: '/',
-        visibility: LinkVisibility.ALWAYS,
-    },
-    {
-        name: 'Zaloguj się',
-        to: '/auth',
-        visibility: LinkVisibility.NOT_SIGNED_IN,
-    },
-    {
         name: 'Kokpit',
         to: '/dashboard',
         visibility: LinkVisibility.SIGNED_IN,
     },
     {
-        name: 'Dodaj rachunek',
+        name: 'Porachunki',
         to: '/bills/add',
         visibility: LinkVisibility.SIGNED_IN,
-    },
-    {
-        name: 'Porachunki',
-        to: '/bills',
-        visibility: LinkVisibility.SIGNED_IN,
-
     },
     {
         name: 'Znajomi',
@@ -101,8 +85,12 @@ watch(isSignedIn, updateLinks);
 
 <style lang="scss" scoped>
 nav {
-    font-size: 32px;
-    padding: var(--padding-app);
+    padding: 0 2rem;
+    font-size: 3.2rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between
 }
 
 ul {
@@ -118,15 +106,21 @@ li {
 }
 
 a {
+    display: block;
     color: currentColor;
     text-decoration: none;
-    line-height: 1.25;
-    padding: 1.5rem 0;
-    display: block;
+    padding: 1.25rem 0;
 }
 
 .sign-out {
     margin-top: 2rem;
-    border-top: 1px solid currentColor;
+
+    &:before {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(45deg, var(--color-primary) 20%, var(--color-secondary) 90%, transparent 100%);
+    }
 }
 </style>

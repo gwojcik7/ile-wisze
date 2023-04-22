@@ -14,7 +14,7 @@ if(variant) {
 </script>
 
 <template>
-    <div class="alert">
+    <div :class="classes">
         <slot></slot>
     </div>
 </template>
@@ -23,11 +23,9 @@ if(variant) {
     .alert {
         display: block;
         padding: 1em;
-        border: 1px solid currentColor;
-        color: var(--color-primary);
 
         &--error {
-            color: red;
+            background-color: var(--color-error);
         }
     }
 </style>

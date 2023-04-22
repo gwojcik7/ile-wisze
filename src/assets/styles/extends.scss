@@ -1,0 +1,29 @@
+%bg-1 {
+    position: relative;
+    &:before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: block;
+        transform-origin: center;
+        transform: scaleX(0.5) scaleY(0.8) rotate(-15deg);
+        left: 0;
+        top: 0;
+        background: linear-gradient(-15deg, var(--color-secondary) 0%, var(--color-tertiary));
+        filter: blur(100px);
+        z-index: -1;
+    }
+}
+
+%text-gradient-1 {
+    background: linear-gradient(45deg, var(--color-primary), var(--color-quaternary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+%text-gradient-1-clear {
+    background: unset;
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: unset;
+}

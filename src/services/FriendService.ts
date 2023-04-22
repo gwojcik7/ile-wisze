@@ -1,11 +1,9 @@
-import { useHttp } from "@/composables/useHttp";
+import api from "@/api/api";
 
 export default class FriendService {
     static sendInvitation = async (login: string) => {
-        const { http } = useHttp();
-
         try {
-            const response = await http.post('/friend', { login });
+            const response = await api.post('/friend', { login });
     
             return response.data;
     
@@ -28,10 +26,10 @@ export default class FriendService {
     }
 
     static getFriends = async () => {
-        const { http } = useHttp();
+        
 
         try {
-            const response = await http.get('/friend');
+            const response = await api.get('/friend');
     
             return response.data;
     
@@ -47,11 +45,31 @@ export default class FriendService {
         }
     }
 
-    public static getPending = async () => {
-        const { http } = useHttp();
+    public static getSentInvitations = async () => {
+        
 
         try {
-            const response = await http.get('/friend/pending');
+            const response = await api.get('/friend/sentInvitations');
+    
+            return response.data;
+    
+        } catch (error: any) {
+            switch(error.response.status) {
+                case 401:
+                    throw new Error('Unauthorized');
+                case 500:
+                    throw new Error('Server error');
+                default:
+                    throw new Error(`Unknown error (${error.message})}`);
+            }
+        }
+    }
+
+    public static getWaitingInvitations = async () => {
+        
+
+        try {
+            const response = await api.get('/friend/waitingInvitations');
     
             return response.data;
     

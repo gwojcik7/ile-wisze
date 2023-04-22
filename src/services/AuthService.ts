@@ -1,21 +1,20 @@
-import { useHttp } from "@/composables/useHttp";
-import TokenService from "./TokenService";
 import router from "@/router";
 import { useAuth } from "@/composables/useAuth";
+import User from "@/models/User";
+import api from "@/api/api";
 
-const { isSignedIn } = useAuth();
+const { isSignedIn, user, token } = useAuth();
 
 export default class AuthService {
-    static async signInWithLoginAndPassword(login: string, password: string) {
-        const { http } = useHttp();
-    
+    static async signInWithLoginAndPassword(login: string, password: string) {    
         try {
-            const response = await http.post('/auth', {
+            const response = await api.post('/auth', {
                 login, 
                 password
             });
     
-            TokenService.set(response.data.token);
+            this.setToken(response.data.token);
+            this.setUser(response.data.user);
             
             isSignedIn.value = true;
 
@@ -25,7 +24,7 @@ export default class AuthService {
         } catch (error: any) {
             switch(error.response.status) {
                 case 401: 
-                    throw new Error('Invalid login or password');
+                    throw new Error('Błędny login lub hasło');
                 case 500:
                     throw new Error('Server error');
                 default:
@@ -35,7 +34,8 @@ export default class AuthService {
     }
     
     static signOut() {
-        TokenService.remove();
+        this.removeToken();
+        this.removeUser();
 
         isSignedIn.value = false;
 
@@ -43,12 +43,12 @@ export default class AuthService {
     }
 
     static async validateToken() {
-        const { http } = useHttp();
-    
         try {
-            const response = await http.post('/auth/token/validate', { token: TokenService.get() });
+            const response = await api.post('/auth/token/validate', { token: AuthService.getToken() });
     
             isSignedIn.value = (response.status === 200);
+            
+            this.setUser(new User(response.data.user));
     
         } catch (error: any) {
             switch(error.response.status) {
@@ -61,5 +61,36 @@ export default class AuthService {
                     throw new Error(`Unknown error (${error.message})}`);
             }
         }
+    }
+
+    static getToken() {
+        return localStorage.getItem('token');
+    }
+
+    static setToken(value: string) {
+        if(!value) {
+            this.removeToken();
+        }
+        token.value = value;
+        localStorage.setItem('token', value);
+    }
+
+    static removeToken() {
+        token.value = '';
+        localStorage.removeItem('token');
+    }
+
+    static setUser(userData: User) {
+        user.value = userData;
+        localStorage.setItem('user', JSON.stringify(userData));
+    }
+
+    static getUser() {
+        return JSON.parse(localStorage.getItem('user') || '{}');
+    }
+
+    static removeUser() {
+        user.value = null;
+        localStorage.removeItem('user');
     }
 }

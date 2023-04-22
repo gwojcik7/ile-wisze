@@ -9,12 +9,12 @@ const login = ref('');
 const errors: Ref<String[]> = ref([]);
 
 const onSubmit = async () => {
-    errors.value = [];
+    errors.value = [];0
     try {
         await FriendService.sendInvitation(login.value);
 
         login.value = '';
-        useFriend().fetchPending();
+        useFriend().fetchSentInvitations();
     } catch (error: any) {
         errors.value.push(error.message);
     }
