@@ -2,20 +2,34 @@
 import { useAuth } from '@/composables/useAuth';
 import type User from '@/models/User';
 import { ref, watch, type Ref, onMounted } from 'vue';
-import Card from '@/components/Utils/Cards/Card.vue'
 import PriceSummaryCard from '@/components/Utils/Cards/PriceSummaryCard.vue';
-import IconPlus from '@/components/Global/Icons/IconPlus.vue';
+import LastBills from '@/components/Bill/LastBills.vue';
+import useBill from '@/composables/useBill';
+import BillService from '@/services/BillService';
 
 const { user } = useAuth();
+const { totalRepayment, totalOwed } = useBill();
 
 const userData: Ref<User | null> = ref({} as User);
+const totalRepaymentData = ref(0);
+const totalOwedData = ref(0);
 
 watch(user, () => {
     userData.value = user.value;
 });
 
-onMounted(() => {
+watch(totalRepayment, () => {
+    totalRepaymentData.value = totalRepayment.value;
+});
+
+watch(totalOwed, () => {
+    totalOwedData.value = totalOwed.value;
+});
+
+onMounted(async () => {
     userData.value = user.value;
+    totalRepayment.value = await BillService.getTotalRepayment();
+    totalOwed.value = await BillService.getTotalOwed();
 });
 
 </script>
@@ -25,8 +39,11 @@ onMounted(() => {
             Cześć, <span>{{ userData.firstName }}</span>
         </h1>
         <div class="bills-summary">
-            <PriceSummaryCard icon="plus" title="Twoi znajomi wiszą Ci" price="12,74" />
-            <PriceSummaryCard icon="minus" title="Wisisz innym" price="32,01" />
+            <PriceSummaryCard icon="plus" title="Twoi znajomi wiszą Ci" :price="totalRepaymentData" />
+            <PriceSummaryCard icon="minus" title="Wisisz innym" :price="totalOwedData" />
+        </div>
+        <div class="last-bills">
+            <LastBills />
         </div>
     </div>
 </template>

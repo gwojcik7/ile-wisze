@@ -6,57 +6,58 @@ import api from "@/api/api";
 const { isSignedIn, user, token } = useAuth();
 
 export default class AuthService {
-    static async signInWithLoginAndPassword(login: string, password: string) {    
+    static async signInWithLoginAndPassword(login: string, password: string) {
         try {
-            const response = await api.post('/auth', {
-                login, 
-                password
+            const response = await api.post("/auth", {
+                login,
+                password,
             });
-    
+
             this.setToken(response.data.token);
             this.setUser(response.data.user);
-            
+
             isSignedIn.value = true;
 
-            router.push('/dashboard');
-
-    
+            router.push("/dashboard");
         } catch (error: any) {
-            switch(error.response.status) {
-                case 401: 
-                    throw new Error('Błędny login lub hasło');
+            switch (error.response.status) {
+                case 401:
+                    throw new Error("Błędny login lub hasło");
                 case 500:
-                    throw new Error('Server error');
+                    throw new Error("Server error");
                 default:
                     throw new Error(`Unknown error (${error.message})}`);
             }
         }
     }
-    
+
     static signOut() {
         this.removeToken();
         this.removeUser();
 
         isSignedIn.value = false;
 
-        router.push('/auth');
+        router.push("/auth");
     }
 
     static async validateToken() {
         try {
-            const response = await api.post('/auth/token/validate', { token: AuthService.getToken() });
-    
-            isSignedIn.value = (response.status === 200);
-            
-            this.setUser(new User(response.data.user));
-    
+            const response = await api.post("/auth/token/validate", {
+                token: AuthService.getToken(),
+            });
+
+            isSignedIn.value = response.status === 200;
+
+            if (response.data.user) {
+                this.setUser(new User(response.data.user));
+            }
         } catch (error: any) {
-            switch(error.response.status) {
+            switch (error.response.status) {
                 case 401:
                     isSignedIn.value = false;
                     break;
                 case 500:
-                    throw new Error('Server error');
+                    throw new Error("Server error");
                 default:
                     throw new Error(`Unknown error (${error.message})}`);
             }
@@ -64,33 +65,33 @@ export default class AuthService {
     }
 
     static getToken() {
-        return localStorage.getItem('token');
+        return localStorage.getItem("token");
     }
 
     static setToken(value: string) {
-        if(!value) {
+        if (!value) {
             this.removeToken();
         }
         token.value = value;
-        localStorage.setItem('token', value);
+        localStorage.setItem("token", value);
     }
 
     static removeToken() {
-        token.value = '';
-        localStorage.removeItem('token');
+        token.value = "";
+        localStorage.removeItem("token");
     }
 
     static setUser(userData: User) {
         user.value = userData;
-        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem("user", JSON.stringify(userData));
     }
 
     static getUser() {
-        return JSON.parse(localStorage.getItem('user') || '{}');
+        return JSON.parse(localStorage.getItem("user") || "{}");
     }
 
     static removeUser() {
         user.value = null;
-        localStorage.removeItem('user');
+        localStorage.removeItem("user");
     }
 }
